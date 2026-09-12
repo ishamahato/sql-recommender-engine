@@ -1,0 +1,20 @@
+# Database driver. psycopg 3 is used for its native COPY support, which is how
+# the bulk load gets a million rows into PostgreSQL in a few seconds.
+psycopg[binary,pool]>=3.2,<4.0
+
+# Synthetic data generation and metric computation.
+numpy>=2.0
+pandas>=2.2
+
+# API layer.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+
+# Dashboard.
+streamlit>=1.40
+altair>=5.5
+
+# Tooling.
+python-dotenv>=1.0
+pytest>=8.3

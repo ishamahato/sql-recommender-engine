@@ -1,0 +1,50 @@
+# PostgreSQL for the SQL recommendation engine.
+#
+# Port 5433 on the host, not 5432, so this never collides with a PostgreSQL
+# already installed locally. The .env.example defaults match.
+#
+# The tuning below matters for this workload. The similarity build aggregates
+# millions of co occurrence pairs in one statement, and on default settings
+# PostgreSQL spills that to disk. Raising work_mem and maintenance_work_mem
+# keeps the hash aggregate and the index builds in memory, which is most of the
+# difference between a 45 second build and a four minute one.
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: recsys_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: recsys
+      POSTGRES_USER: recsys
+      POSTGRES_PASSWORD: recsys
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - recsys_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recsys -d recsys"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    command:
+      - postgres
+      - "-c"
+      - "shared_buffers=512MB"
+      - "-c"
+      - "work_mem=128MB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "effective_cache_size=2GB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "max_parallel_workers_per_gather=4"
+      - "-c"
+      - "track_io_timing=on"
+
+volumes:
+  recsys_data:

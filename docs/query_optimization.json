@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Anchor lookup for one user",
+    "question": "What has this user engaged with, and how strongly?",
+    "why_it_matters": "Stage 2 of get_recommendations runs this on every request. Without an index it is a sequential scan of the whole interaction log to find the few dozen rows belonging to one person.",
+    "indexes": [
+      "idx_interactions_user_product",
+      "idx_interactions_user_time"
+    ],
+    "without_index_ms": 96.824,
+    "with_index_ms": 0.432,
+    "speedup": 224.1,
+    "plan_without": [
+      "Index Scan using idx_interactions_timestamp"
+    ],
+    "plan_with": [
+      "Index Only Scan using idx_interactions_user_product"
+    ],
+    "rows_without": 17.0,
+    "rows_with": 17.0,
+    "sql": "SELECT\n    i.product_id,\n    SUM(CASE i.interaction_type\n            WHEN 'view' THEN 1 WHEN 'wishlist' THEN 3\n            WHEN 'cart' THEN 5 WHEN 'purchase' THEN 10 ELSE 0 END) AS score,\n    MAX(i.interaction_timestamp) AS last_interaction\nFROM user_interactions AS i\nWHERE i.user_id = %s\n  AND i.interaction_timestamp < rec_as_of()\nGROUP BY i.product_id\nORDER BY score DESC\nLIMIT 50"
+  },
+  {
+    "name": "Recent demand for one product",
+    "question": "How much engagement has this product had in the last four weeks?",
+    "why_it_matters": "The shape of every trend and popularity query: one product, one time window. The composite index puts the range predicate on the second column so the scan can stop early instead of filtering the product's entire history.",
+    "indexes": [
+      "idx_interactions_product_time"
+    ],
+    "without_index_ms": 25.473,
+    "with_index_ms": 0.265,
+    "speedup": 96.1,
+    "plan_without": [
+      "Index Only Scan using idx_interactions_user_product"
+    ],
+    "plan_with": [
+      "Bitmap Heap Scan on user_interactions",
+      "Bitmap Index Scan using idx_interactions_product_time"
+    ],
+    "rows_without": 1.0,
+    "rows_with": 1.0,
+    "sql": "SELECT\n    COUNT(*)                                                AS events,\n    COUNT(*) FILTER (WHERE interaction_type = 'purchase')   AS purchases,\n    COUNT(DISTINCT user_id)                                 AS unique_users\nFROM user_interactions\nWHERE product_id = %s\n  AND interaction_timestamp >= rec_as_of() - INTERVAL '4 weeks'\n  AND interaction_timestamp <  rec_as_of()"
+  },
+  {
+    "name": "Neighbour lookup in the similarity matrix",
+    "question": "Given twenty products this user likes, what is similar to them?",
+    "why_it_matters": "Candidate generation. This is the single hottest read in the serving path and it runs against a hundred thousand row matrix that will only grow with the catalogue.",
+    "indexes": [
+      "idx_mv_sim_lookup",
+      "idx_mv_sim_pk"
+    ],
+    "without_index_ms": 10.186,
+    "with_index_ms": 0.368,
+    "speedup": 27.7,
+    "plan_without": [
+      "Seq Scan on mv_product_similarity"
+    ],
+    "plan_with": [
+      "Index Only Scan using idx_mv_sim_lookup"
+    ],
+    "rows_without": 100.0,
+    "rows_with": 100.0,
+    "sql": "SELECT sim.product_b, SUM(sim.similarity_score) AS score\nFROM mv_product_similarity AS sim\nWHERE sim.product_a = ANY(%s)\nGROUP BY sim.product_b\nORDER BY score DESC\nLIMIT 100"
+  },
+  {
+    "name": "Full text catalogue search",
+    "question": "Which products match a free text query?",
+    "why_it_matters": "Without the GIN index over the generated tsvector, every search re tokenises and scans the whole catalogue. The generated column plus GIN turns that into an inverted index probe.",
+    "indexes": [
+      "idx_products_search_document"
+    ],
+    "without_index_ms": 0.522,
+    "with_index_ms": 0.111,
+    "speedup": 4.7,
+    "plan_without": [
+      "Seq Scan on products"
+    ],
+    "plan_with": [
+      "Bitmap Heap Scan on products",
+      "Bitmap Index Scan using idx_products_search_document"
+    ],
+    "rows_without": 20.0,
+    "rows_with": 20.0,
+    "sql": "SELECT p.product_id, p.name, ts_rank_cd(p.search_document, q.query) AS rank\nFROM products AS p\nCROSS JOIN websearch_to_tsquery('english', %s) AS q(query)\nWHERE p.search_document @@ q.query\n  AND p.is_active\nORDER BY rank DESC\nLIMIT 20"
+  },
+  {
+    "name": "Purchase exclusion set",
+    "question": "Which products has this user already bought?",
+    "why_it_matters": "Runs on every recommendation request as the anti join that keeps already owned products off the shelf. This is the honest case in the set: dropping the partial index does not fall back to a sequential scan, it falls back to the broad composite index, which already answers the query well. The partial index earns its place on size rather than on dramatic speed, covering only the purchase rows at roughly a tenth of the composite index it displaces, which is what keeps it resident in cache under memory pressure.",
+    "indexes": [
+      "idx_interactions_purchases"
+    ],
+    "without_index_ms": 0.023,
+    "with_index_ms": 0.011,
+    "speedup": 2.1,
+    "plan_without": [
+      "Index Only Scan using idx_interactions_user_product"
+    ],
+    "plan_with": [
+      "Index Only Scan using idx_interactions_purchases"
+    ],
+    "rows_without": 5.0,
+    "rows_with": 5.0,
+    "sql": "SELECT DISTINCT product_id\nFROM user_interactions\nWHERE user_id = %s\n  AND interaction_type = 'purchase'\n  AND interaction_timestamp < rec_as_of()"
+  }
+]

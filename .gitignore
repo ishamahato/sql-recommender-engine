@@ -1,0 +1,20 @@
+# Generated dataset. Reproduce it with: python -m python.generate_data
+data/*.csv
+
+# Local environment
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+.history/

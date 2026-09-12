@@ -1,0 +1,176 @@
+{
+  "cutoff": "2026-07-25 14:41:13",
+  "train_fraction": 0.8,
+  "train_events": 971098,
+  "test_events": 242775,
+  "n_users": 1500,
+  "held_out_purchases": 7737,
+  "strategies": {
+    "popularity": {
+      "served_rate": 1.0,
+      "precision_at_5": 0.0167,
+      "recall_at_5": 0.016,
+      "hit_rate_at_5": 0.0813,
+      "ndcg_at_5": 0.0194,
+      "precision_at_10": 0.0141,
+      "recall_at_10": 0.0284,
+      "hit_rate_at_10": 0.134,
+      "ndcg_at_10": 0.0229,
+      "users_scored": 1500,
+      "by_tier": {
+        "cold": {
+          "users": 312,
+          "served_rate": 1.0,
+          "precision_at_5": 0.0212,
+          "recall_at_5": 0.0224,
+          "hit_rate_at_5": 0.1026,
+          "ndcg_at_5": 0.0279,
+          "precision_at_10": 0.0179,
+          "recall_at_10": 0.0366,
+          "hit_rate_at_10": 0.1667,
+          "ndcg_at_10": 0.0323
+        },
+        "light": {
+          "users": 96,
+          "served_rate": 1.0,
+          "precision_at_5": 0.0208,
+          "recall_at_5": 0.0117,
+          "hit_rate_at_5": 0.0938,
+          "ndcg_at_5": 0.0211,
+          "precision_at_10": 0.0177,
+          "recall_at_10": 0.031,
+          "hit_rate_at_10": 0.1562,
+          "ndcg_at_10": 0.0245
+        },
+        "warm": {
+          "users": 1092,
+          "served_rate": 1.0,
+          "precision_at_5": 0.015,
+          "recall_at_5": 0.0145,
+          "hit_rate_at_5": 0.0742,
+          "ndcg_at_5": 0.0169,
+          "precision_at_10": 0.0127,
+          "recall_at_10": 0.0258,
+          "hit_rate_at_10": 0.1227,
+          "ndcg_at_10": 0.0201
+        }
+      },
+      "seconds": 1.03,
+      "mean_latency_ms": 0.69,
+      "catalogue_coverage": 0.0073,
+      "head_share": 1.0,
+      "distinct_products": 14
+    },
+    "collaborative": {
+      "served_rate": 0.792,
+      "precision_at_5": 0.0873,
+      "recall_at_5": 0.09,
+      "hit_rate_at_5": 0.3213,
+      "ndcg_at_5": 0.1071,
+      "precision_at_10": 0.0722,
+      "recall_at_10": 0.1432,
+      "hit_rate_at_10": 0.4373,
+      "ndcg_at_10": 0.1216,
+      "users_scored": 1500,
+      "by_tier": {
+        "cold": {
+          "users": 312,
+          "served_rate": 0.0,
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "hit_rate_at_5": 0.0,
+          "ndcg_at_5": 0.0,
+          "precision_at_10": 0.0,
+          "recall_at_10": 0.0,
+          "hit_rate_at_10": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "light": {
+          "users": 96,
+          "served_rate": 1.0,
+          "precision_at_5": 0.1354,
+          "recall_at_5": 0.1288,
+          "hit_rate_at_5": 0.4375,
+          "ndcg_at_5": 0.158,
+          "precision_at_10": 0.1021,
+          "recall_at_10": 0.1803,
+          "hit_rate_at_10": 0.5208,
+          "ndcg_at_10": 0.1636
+        },
+        "warm": {
+          "users": 1092,
+          "served_rate": 1.0,
+          "precision_at_5": 0.1081,
+          "recall_at_5": 0.1123,
+          "hit_rate_at_5": 0.4029,
+          "ndcg_at_5": 0.1333,
+          "precision_at_10": 0.0902,
+          "recall_at_10": 0.1808,
+          "hit_rate_at_10": 0.5549,
+          "ndcg_at_10": 0.1527
+        }
+      },
+      "seconds": 2.41,
+      "mean_latency_ms": 1.61,
+      "catalogue_coverage": 0.1807,
+      "head_share": 0.9757,
+      "distinct_products": 347
+    },
+    "hybrid": {
+      "served_rate": 1.0,
+      "precision_at_5": 0.0888,
+      "recall_at_5": 0.0889,
+      "hit_rate_at_5": 0.3313,
+      "ndcg_at_5": 0.1085,
+      "precision_at_10": 0.0756,
+      "recall_at_10": 0.1479,
+      "hit_rate_at_10": 0.468,
+      "ndcg_at_10": 0.1253,
+      "users_scored": 1500,
+      "by_tier": {
+        "cold": {
+          "users": 312,
+          "served_rate": 1.0,
+          "precision_at_5": 0.0128,
+          "recall_at_5": 0.0142,
+          "hit_rate_at_5": 0.0641,
+          "ndcg_at_5": 0.0164,
+          "precision_at_10": 0.0151,
+          "recall_at_10": 0.0317,
+          "hit_rate_at_10": 0.141,
+          "ndcg_at_10": 0.0239
+        },
+        "light": {
+          "users": 96,
+          "served_rate": 1.0,
+          "precision_at_5": 0.1229,
+          "recall_at_5": 0.1119,
+          "hit_rate_at_5": 0.3854,
+          "ndcg_at_5": 0.148,
+          "precision_at_10": 0.1021,
+          "recall_at_10": 0.1843,
+          "hit_rate_at_10": 0.5208,
+          "ndcg_at_10": 0.163
+        },
+        "warm": {
+          "users": 1092,
+          "served_rate": 1.0,
+          "precision_at_5": 0.1075,
+          "recall_at_5": 0.1082,
+          "hit_rate_at_5": 0.4029,
+          "ndcg_at_5": 0.1313,
+          "precision_at_10": 0.0906,
+          "recall_at_10": 0.1779,
+          "hit_rate_at_10": 0.5568,
+          "ndcg_at_10": 0.1509
+        }
+      },
+      "seconds": 9.1,
+      "mean_latency_ms": 6.07,
+      "catalogue_coverage": 0.1844,
+      "head_share": 0.984,
+      "distinct_products": 354
+    }
+  },
+  "elapsed_seconds": 105.1
+}
