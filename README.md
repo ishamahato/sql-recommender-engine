@@ -1,5 +1,9 @@
 # SQL Recommendation Engine
 
+## 🚀 Live Demo
+
+👉 [Try the Live Demo](https://drive.google.com/file/d/1XEq6hbzKdm8WGc3IkoR3UOaqONTfn-KR/view?usp=sharing)
+
 A production shaped e commerce recommender in which **PostgreSQL does the
 recommending**. Feature engineering, the item to item similarity matrix,
 candidate generation, business rule filtering, multi signal scoring, ranking and
